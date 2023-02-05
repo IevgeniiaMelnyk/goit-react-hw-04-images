@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Component } from 'react';
+import { useState, memo } from 'react';
 import PropTypes from 'prop-types';
 import { IoSearch } from 'react-icons/io5';
 import { IconContext } from 'react-icons';
@@ -11,65 +11,51 @@ import {
   SearchFormInput,
 } from './Searchbar.styled';
 
-class Searchbar extends Component {
-  state = {
-    search: '',
+const Searchbar = ({ onSubmit }) => {
+  const [search, setSearch] = useState('');
+
+  const handleChange = ({ target }) => {
+    const { value } = target;
+    setSearch(value);
   };
 
-  handleChange = ({ target }) => {
-    const { name, value } = target;
-    this.setState({ [name]: value });
-  };
-
-  handleSubmit = e => {
+  const handleSubmit = e => {
     e.preventDefault();
-    if (this.state.search.trim() === '') {
+    if (search.trim() === '') {
       toast.info('Enter a search term.');
       return;
     }
-    const { onSubmit } = this.props;
-    onSubmit({ ...this.state });
-    this.reset();
+    onSubmit({ search });
+    setSearch('');
   };
 
-  reset() {
-    this.setState({
-      search: '',
-    });
-  }
+  return (
+    <SearchbarSection>
+      <SearchForm onSubmit={handleSubmit}>
+        <SearchFormInput
+          value={search}
+          onChange={handleChange}
+          name="search"
+          type="text"
+          autocomplete="off"
+          autoFocus
+          placeholder="Search images and photos"
+        />
+        <SearchFormButton type="submit">
+          <IconContext.Provider
+            value={{
+              style: { width: '30px', height: '30px', fill: '#3f51b5' },
+            }}
+          >
+            <IoSearch />
+          </IconContext.Provider>
+        </SearchFormButton>
+      </SearchForm>
+    </SearchbarSection>
+  );
+};
 
-  render() {
-    const { handleChange, handleSubmit } = this;
-    const { search } = this.state;
-
-    return (
-      <SearchbarSection>
-        <SearchForm onSubmit={handleSubmit}>
-          <SearchFormInput
-            value={search}
-            onChange={handleChange}
-            name="search"
-            type="text"
-            autocomplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-          />
-          <SearchFormButton type="submit">
-            <IconContext.Provider
-              value={{
-                style: { width: '30px', height: '30px', fill: '#3f51b5' },
-              }}
-            >
-              <IoSearch />
-            </IconContext.Provider>
-          </SearchFormButton>
-        </SearchForm>
-      </SearchbarSection>
-    );
-  }
-}
-
-export default Searchbar;
+export default memo(Searchbar);
 
 Searchbar.propTypes = {
   onSubmit: PropTypes.func.isRequired,

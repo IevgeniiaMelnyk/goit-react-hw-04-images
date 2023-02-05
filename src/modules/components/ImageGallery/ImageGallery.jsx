@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { memo } from 'react';
 import { ImageGalleryList } from './ImageGallery.styled';
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 
@@ -18,7 +19,7 @@ const ImageGallery = ({ items, showImg }) => {
   return <ImageGalleryList>{elements}</ImageGalleryList>;
 };
 
-export default ImageGallery;
+export default memo(ImageGallery);
 
 ImageGallery.propTypes = {
   showImg: PropTypes.func.isRequired,
